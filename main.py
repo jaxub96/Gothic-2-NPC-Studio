@@ -16,6 +16,7 @@ def _use_new_ui() -> bool:
 if __name__ == "__main__":
     npc = Npc()
     if _use_new_ui():
+        os.environ["QT_API"] = "pyside6"
         from ui.app_new import launch
     else:
         from ui.app import launch
