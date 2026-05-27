@@ -1,0 +1,16 @@
+guildMap = {
+    "None": "GIL_NONE",
+    "Guard": "GIL_GRD",
+    "Shadow": "GIL_STT",
+    "Fire Mage": "GIL_KDF",
+    "Miner": "GIL_VLK",
+    "Water Mage": "GIL_KDW",
+    "Mercenary": "GIL_SLD",
+    "Rogue": "GIL_ORG",
+    "Scraper": "GIL_SFB",
+    "Guru": "GIL_GUR",
+    "Novice": "GIL_NOV",
+    "Temple Guard": "GIL_TPL",
+    "Necromancer": "GIL_DMB",
+    "Female Slave": "GIL_BAB",
+}
