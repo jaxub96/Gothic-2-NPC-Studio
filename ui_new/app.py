@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 from services.file_service import generateFile, getFileName
 from ui_new import theme
 from ui_new.state import NpcModel
+from ui_new.tokens import WINDOW
 from ui_new.views import (
     general_view,
     inventory_view,
@@ -24,17 +25,17 @@ from ui_new.views import (
 from ui_new.widgets.preview import CodePreviewPane
 
 
-_ORG = "GothicMods"
-_APP = "NPC-Studio-New"
+_ORG = WINDOW["org"]
+_APP = WINDOW["app"]
 
 
 class NewMainWindow(QMainWindow):
     def __init__(self, npc) -> None:
         super().__init__()
         self.model = NpcModel(npc)
-        self.setWindowTitle("Gothic II — NPC Studio")
-        self.resize(1600, 1000)
-        self.setMinimumSize(1280, 820)
+        self.setWindowTitle(WINDOW["title"])
+        self.resize(*WINDOW["size"])
+        self.setMinimumSize(*WINDOW["min"])
 
         self._settings = QSettings(_ORG, _APP)
         self._build_menu()

@@ -3,11 +3,12 @@ from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QPlainTextEdit
 
 from services.output_builder import buildOutput
+from ui_new.tokens import FONT_FAMILY, SIZES
 from ui_new.widgets.highlighter import DaedalusHighlighter
 
 
 class CodePreviewPane(QPlainTextEdit):
-    """Live, syntax-highlighted Daedalus preview using VT323 pixel mono."""
+    """Live, syntax-highlighted Daedalus preview in pixel mono."""
 
     REFRESH_MS = 120
 
@@ -15,9 +16,7 @@ class CodePreviewPane(QPlainTextEdit):
         super().__init__(parent)
         self.setReadOnly(True)
         self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
-
-        mono = QFont("VT323", 16)
-        self.setFont(mono)
+        self.setFont(QFont(FONT_FAMILY["mono"], SIZES["code"]))
 
         self._model = model
         self._highlighter = DaedalusHighlighter(self.document())

@@ -12,9 +12,7 @@ from PySide6.QtWidgets import (
 import pyvista as pv
 from pyvistaqt import QtInteractor
 
-
-_BG = "#16110c"
-_MESH = "#b08a3e"
+from ui_new.tokens import COLORS, FONT_FAMILY, SIZES, SPACE
 
 
 def build(model) -> QWidget:
@@ -24,18 +22,24 @@ def build(model) -> QWidget:
     layout.setSpacing(0)
 
     plotter = QtInteractor(root)
-    plotter.set_background(_BG)
+    plotter.set_background(COLORS["page"])
     plotter.add_axes()
     plotter.add_mesh(
-        pv.Sphere(radius=1.0), color=_MESH, smooth_shading=True, name="model"
+        pv.Sphere(radius=1.0),
+        color=COLORS["gold"],
+        smooth_shading=True,
+        name="model",
     )
     plotter.reset_camera()
     layout.addWidget(plotter.interactor, stretch=1)
 
     status = QLabel("No model loaded")
     status.setStyleSheet(
-        "color: #d4a528; padding: 10px 16px; "
-        "font-family: 'Jersey 10', serif; font-size: 16pt; letter-spacing: 1px;"
+        f"color: {COLORS['gold']};"
+        f"padding: {SPACE['md']}px {SPACE['lg']}px;"
+        f"font-family: '{FONT_FAMILY['display']}', serif;"
+        f"font-size: {SIZES['viewport']}pt;"
+        f"letter-spacing: 1px;"
     )
     layout.addWidget(status)
 
@@ -45,8 +49,8 @@ def build(model) -> QWidget:
     btn_wire = QPushButton("Wireframe")
 
     btn_row = QHBoxLayout()
-    btn_row.setContentsMargins(16, 0, 16, 12)
-    btn_row.setSpacing(8)
+    btn_row.setContentsMargins(SPACE["lg"], 0, SPACE["lg"], SPACE["md"])
+    btn_row.setSpacing(SPACE["sm"])
     btn_row.addWidget(btn_load)
     btn_row.addWidget(btn_reset)
     btn_row.addWidget(btn_wire)
@@ -69,7 +73,7 @@ def build(model) -> QWidget:
             return
         plotter.remove_actor("model")
         plotter.add_mesh(
-            mesh, color=_MESH, smooth_shading=True,
+            mesh, color=COLORS["gold"], smooth_shading=True,
             style="wireframe" if state["wireframe"] else "surface", name="model",
         )
         plotter.reset_camera()

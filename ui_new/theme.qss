@@ -1,26 +1,20 @@
 /* Gothic II — NPC Studio  ·  pixel-RPG theme
  *
- * Type system:
- *   Display / titles  →  "Jersey 10"     (chunky fantasy bitmap)
- *   Body / forms      →  "Pixelify Sans" (readable pixel sans)
- *   Numeric / mono    →  "VT323"         (terminal pixel mono)
- *   Fallback chain    →  Iowan Old Style → Palatino → Georgia → serif
+ * This file is a template. Every value below references a design token from
+ * ui_new/tokens.py. theme.apply() substitutes them at startup. Never put a
+ * literal hex / point size / px value here — add it to tokens.py instead.
  *
- * Sizes (Refactoring UI: small, fixed scale):
- *   body 13pt · field 14pt · readout 14pt · button 13pt · tab 18pt
- *   section title 17pt · status 13pt · code 14pt
+ * Token namespace (see ui_new/tokens.py):
+ *   col_*   palette
+ *   font_*  font stacks
+ *   sz_*    point sizes
+ *   sp_*    spacing in px
+ *   bd_*    border widths
  *
- * Spacing scale (px, multiples of 4):
- *   4 · 8 · 12 · 16 · 24 · 32 · 48
- *
- * Borders (pixel-bevel):
- *   raised  →  top/left = bevel highlight,  right/bottom = ink shadow
- *   sunken  →  inverse (inputs, lists, code, scrollbar grooves)
- *
- * Color contract:
- *   rust  = primary action / selection
- *   gold  = secondary accent / section title / numeric value
- *   everything else = walnut neutral
+ * Bevel system:
+ *   raised  →  top/left = bevel highlight, right/bottom = ink shadow
+ *   sunken  →  inverse
+ *   pressed →  invert raised
  */
 
 /* ===========================================================================
@@ -28,80 +22,80 @@
  * ======================================================================== */
 QMainWindow,
 QWidget {
-    background: #1a120a;
-    color: #c9b48a;
-    font-family: "Pixelify Sans", "Iowan Old Style", "Palatino", serif;
-    font-size: 13pt;
+    background: $col_page;
+    color: $col_body;
+    font-family: $font_body;
+    font-size: ${sz_body}pt;
 }
 
 QLabel {
     background: transparent;
-    color: #c9b48a;
-    font-family: "Pixelify Sans", serif;
-    font-size: 13pt;
+    color: $col_body;
+    font-family: $font_body;
+    font-size: ${sz_label}pt;
 }
 
 /* ===========================================================================
- * Menu bar  ·  pixel ribbon
+ * Menu bar
  * ======================================================================== */
 QMenuBar {
-    background: #0e0805;
-    color: #d4a528;
-    border-bottom: 2px solid #5e4628;
-    padding: 4px 8px;
-    font-family: "Jersey 10", serif;
-    font-size: 16pt;
+    background: $col_page_deep;
+    color: $col_gold;
+    border-bottom: ${bd_width}px solid $col_bevel;
+    padding: ${sp_xs}px ${sp_sm}px;
+    font-family: $font_display;
+    font-size: ${sz_menu}pt;
     letter-spacing: 1px;
 }
 QMenuBar::item {
     background: transparent;
-    padding: 6px 16px;
+    padding: ${sp_xs}px ${sp_lg}px;
 }
 QMenuBar::item:selected {
-    background: #c44a20;
-    color: #fde9b5;
+    background: $col_rust;
+    color: $col_body_hi;
 }
 QMenu {
-    background: #2a1c10;
-    color: #c9b48a;
-    border-top: 2px solid #5e4628;
-    border-left: 2px solid #5e4628;
-    border-right: 2px solid #0a0604;
-    border-bottom: 2px solid #0a0604;
-    padding: 4px 0;
-    font-family: "Pixelify Sans", serif;
-    font-size: 13pt;
+    background: $col_panel;
+    color: $col_body;
+    border-top: ${bd_width}px solid $col_bevel;
+    border-left: ${bd_width}px solid $col_bevel;
+    border-right: ${bd_width}px solid $col_ink;
+    border-bottom: ${bd_width}px solid $col_ink;
+    padding: ${sp_xs}px 0;
+    font-family: $font_body;
+    font-size: ${sz_menu_item}pt;
 }
 QMenu::item {
-    padding: 8px 28px 8px 20px;
+    padding: ${sp_sm}px ${sp_xl}px ${sp_sm}px ${sp_lg}px;
 }
 QMenu::item:selected {
-    background: #c44a20;
-    color: #fde9b5;
+    background: $col_rust;
+    color: $col_body_hi;
 }
 QMenu::separator {
-    height: 2px;
-    background: #5e4628;
-    margin: 4px 8px;
+    height: ${bd_width}px;
+    background: $col_bevel;
+    margin: ${sp_xs}px ${sp_sm}px;
 }
 
 /* ===========================================================================
- * Status bar  ·  inscription strip
+ * Status bar
  * ======================================================================== */
 QStatusBar {
-    background: #0e0805;
-    color: #d4a528;
-    border-top: 2px solid #5e4628;
-    padding: 0 12px;
-    min-height: 32px;
-    font-family: "Jersey 10", serif;
-    font-size: 15pt;
+    background: $col_page_deep;
+    color: $col_gold;
+    border-top: ${bd_width}px solid $col_bevel;
+    padding: 0 ${sp_md}px;
+    min-height: ${sp_xxl}px;
+    font-family: $font_display;
+    font-size: ${sz_status}pt;
     letter-spacing: 1px;
 }
 QStatusBar::item { border: none; }
 
 /* ===========================================================================
- * Tabs  ·  chunky pixel chapters
+ * Tabs
  * ======================================================================== */
 QTabWidget::pane {
     border: none;
@@ -112,292 +106,291 @@ QTabBar {
     qproperty-drawBase: 0;
 }
 QTabBar::tab {
-    background: #2a1c10;
-    color: #8a7350;
-    padding: 12px 28px 10px 28px;
-    margin: 4px 4px 0 0;
-    border-top: 2px solid #5e4628;
-    border-left: 2px solid #5e4628;
-    border-right: 2px solid #0a0604;
-    border-bottom: 2px solid #0a0604;
-    font-family: "Jersey 10", serif;
-    font-size: 18pt;
+    background: $col_panel;
+    color: $col_secondary;
+    padding: ${sp_md}px ${sp_xl}px ${sp_sm}px ${sp_xl}px;
+    margin: ${sp_xs}px ${sp_xs}px 0 0;
+    border-top: ${bd_width}px solid $col_bevel;
+    border-left: ${bd_width}px solid $col_bevel;
+    border-right: ${bd_width}px solid $col_ink;
+    border-bottom: ${bd_width}px solid $col_ink;
+    font-family: $font_display;
+    font-size: ${sz_tab}pt;
     letter-spacing: 2px;
     min-width: 88px;
 }
 QTabBar::tab:selected {
-    background: #c44a20;
-    color: #fde9b5;
-    border-top: 2px solid #e87648;
-    border-left: 2px solid #e87648;
-    border-right: 2px solid #6e2410;
-    border-bottom: 2px solid #6e2410;
+    background: $col_rust;
+    color: $col_body_hi;
+    border-top: ${bd_width}px solid $col_rust_hi;
+    border-left: ${bd_width}px solid $col_rust_hi;
+    border-right: ${bd_width}px solid $col_rust_lo;
+    border-bottom: ${bd_width}px solid $col_rust_lo;
 }
 QTabBar::tab:hover:!selected {
-    background: #3a2a1a;
-    color: #c9b48a;
+    background: $col_panel_hi;
+    color: $col_body;
 }
 
 /* ===========================================================================
- * Sections  ·  framed parchment cards
+ * Sections (QGroupBox)
  * ======================================================================== */
 QGroupBox {
-    background: #1a120a;
-    border-top: 2px solid #5e4628;
-    border-left: 2px solid #5e4628;
-    border-right: 2px solid #0a0604;
-    border-bottom: 2px solid #0a0604;
-    margin-top: 32px;
-    padding: 24px 20px 20px 20px;
+    background: $col_page;
+    border-top: ${bd_width}px solid $col_bevel;
+    border-left: ${bd_width}px solid $col_bevel;
+    border-right: ${bd_width}px solid $col_ink;
+    border-bottom: ${bd_width}px solid $col_ink;
+    margin-top: ${sp_xxl}px;
+    padding: ${sp_xl}px ${sp_lg}px ${sp_lg}px ${sp_lg}px;
 }
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
-    left: 16px;
-    top: -2px;
-    padding: 2px 12px;
-    background: #1a120a;
-    color: #d4a528;
-    font-family: "Jersey 10", serif;
-    font-size: 17pt;
+    left: ${sp_lg}px;
+    top: -${sp_xxs}px;
+    padding: ${sp_xxs}px ${sp_md}px;
+    background: $col_page;
+    color: $col_gold;
+    font-family: $font_display;
+    font-size: ${sz_section}pt;
     letter-spacing: 2px;
 }
 
 /* ===========================================================================
- * Inputs  ·  sunken pixel wells
+ * Inputs — sunken bevel
  * ======================================================================== */
 QLineEdit,
 QSpinBox,
 QComboBox {
-    background: #0e0805;
-    color: #fde9b5;
-    border-top: 2px solid #0a0604;
-    border-left: 2px solid #0a0604;
-    border-right: 2px solid #3a2818;
-    border-bottom: 2px solid #3a2818;
-    padding: 8px 12px;
-    selection-background-color: #c44a20;
-    selection-color: #fde9b5;
-    font-family: "Pixelify Sans", serif;
-    font-size: 14pt;
+    background: $col_page_deep;
+    color: $col_body_hi;
+    border-top: ${bd_width}px solid $col_ink;
+    border-left: ${bd_width}px solid $col_ink;
+    border-right: ${bd_width}px solid $col_edge;
+    border-bottom: ${bd_width}px solid $col_edge;
+    padding: ${sp_sm}px ${sp_md}px;
+    selection-background-color: $col_rust;
+    selection-color: $col_body_hi;
+    font-family: $font_body;
+    font-size: ${sz_field}pt;
 }
 QLineEdit:focus,
 QSpinBox:focus,
 QComboBox:focus {
-    border-top: 2px solid #d4a528;
-    border-left: 2px solid #d4a528;
-    border-right: 2px solid #d4a528;
-    border-bottom: 2px solid #d4a528;
+    border-top: ${bd_width}px solid $col_gold;
+    border-left: ${bd_width}px solid $col_gold;
+    border-right: ${bd_width}px solid $col_gold;
+    border-bottom: ${bd_width}px solid $col_gold;
 }
 QLineEdit:disabled,
 QSpinBox:disabled,
 QComboBox:disabled {
-    color: #4a3a24;
+    color: $col_muted;
 }
 
 QComboBox::drop-down {
     border: none;
-    width: 28px;
+    width: ${sp_xl}px;
     background: transparent;
 }
 QComboBox::down-arrow {
     width: 0; height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 6px solid #d4a528;
-    margin-right: 10px;
+    border-top: 6px solid $col_gold;
+    margin-right: ${sp_md}px;
 }
 QComboBox QAbstractItemView {
-    background: #2a1c10;
-    color: #c9b48a;
-    border-top: 2px solid #5e4628;
-    border-left: 2px solid #5e4628;
-    border-right: 2px solid #0a0604;
-    border-bottom: 2px solid #0a0604;
-    selection-background-color: #c44a20;
-    selection-color: #fde9b5;
+    background: $col_panel;
+    color: $col_body;
+    border-top: ${bd_width}px solid $col_bevel;
+    border-left: ${bd_width}px solid $col_bevel;
+    border-right: ${bd_width}px solid $col_ink;
+    border-bottom: ${bd_width}px solid $col_ink;
+    selection-background-color: $col_rust;
+    selection-color: $col_body_hi;
     outline: none;
-    padding: 4px 0;
-    font-family: "Pixelify Sans", serif;
-    font-size: 13pt;
+    padding: ${sp_xs}px 0;
+    font-family: $font_body;
+    font-size: ${sz_menu_item}pt;
 }
 QComboBox QAbstractItemView::item {
-    padding: 8px 14px;
-    min-height: 24px;
+    padding: ${sp_sm}px ${sp_md}px;
+    min-height: ${sp_xl}px;
 }
 
 QSpinBox::up-button,
 QSpinBox::down-button {
-    background: #2a1c10;
+    background: $col_panel;
     border: none;
-    width: 20px;
+    width: ${sp_xl}px;
 }
 QSpinBox::up-button:hover,
 QSpinBox::down-button:hover {
-    background: #3a2a1a;
+    background: $col_panel_hi;
 }
 QSpinBox::up-arrow {
     width: 0; height: 0;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-bottom: 5px solid #d4a528;
+    border-bottom: 5px solid $col_gold;
 }
 QSpinBox::down-arrow {
     width: 0; height: 0;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-top: 5px solid #d4a528;
+    border-top: 5px solid $col_gold;
 }
 
 /* ===========================================================================
- * Buttons  ·  raised pixel bevel, inverted when pressed
+ * Buttons — raised pixel bevel
  * ======================================================================== */
 QPushButton {
-    background: #2a1c10;
-    color: #c9b48a;
-    border-top: 2px solid #5e4628;
-    border-left: 2px solid #5e4628;
-    border-right: 2px solid #0a0604;
-    border-bottom: 2px solid #0a0604;
-    padding: 10px 22px;
-    font-family: "Jersey 10", serif;
-    font-size: 16pt;
+    background: $col_panel;
+    color: $col_body;
+    border-top: ${bd_width}px solid $col_bevel;
+    border-left: ${bd_width}px solid $col_bevel;
+    border-right: ${bd_width}px solid $col_ink;
+    border-bottom: ${bd_width}px solid $col_ink;
+    padding: ${sp_sm}px ${sp_xl}px;
+    font-family: $font_display;
+    font-size: ${sz_button}pt;
     letter-spacing: 2px;
 }
 QPushButton:hover {
-    background: #3a2a1a;
-    color: #fde9b5;
-    border-top: 2px solid #8a6a3a;
-    border-left: 2px solid #8a6a3a;
+    background: $col_panel_hi;
+    color: $col_body_hi;
+    border-top: ${bd_width}px solid $col_bevel_hi;
+    border-left: ${bd_width}px solid $col_bevel_hi;
 }
 QPushButton:pressed {
-    background: #1a120a;
-    border-top: 2px solid #0a0604;
-    border-left: 2px solid #0a0604;
-    border-right: 2px solid #5e4628;
-    border-bottom: 2px solid #5e4628;
+    background: $col_page;
+    border-top: ${bd_width}px solid $col_ink;
+    border-left: ${bd_width}px solid $col_ink;
+    border-right: ${bd_width}px solid $col_bevel;
+    border-bottom: ${bd_width}px solid $col_bevel;
 }
 QPushButton:disabled {
-    color: #4a3a24;
-    background: #1a120a;
-    border-top: 2px solid #3a2818;
-    border-left: 2px solid #3a2818;
-    border-right: 2px solid #0a0604;
-    border-bottom: 2px solid #0a0604;
+    color: $col_muted;
+    background: $col_page;
+    border-top: ${bd_width}px solid $col_edge;
+    border-left: ${bd_width}px solid $col_edge;
+    border-right: ${bd_width}px solid $col_ink;
+    border-bottom: ${bd_width}px solid $col_ink;
 }
 
 QPushButton[role="primary"] {
-    background: #c44a20;
-    color: #fde9b5;
-    border-top: 2px solid #e87648;
-    border-left: 2px solid #e87648;
-    border-right: 2px solid #6e2410;
-    border-bottom: 2px solid #6e2410;
+    background: $col_rust;
+    color: $col_body_hi;
+    border-top: ${bd_width}px solid $col_rust_hi;
+    border-left: ${bd_width}px solid $col_rust_hi;
+    border-right: ${bd_width}px solid $col_rust_lo;
+    border-bottom: ${bd_width}px solid $col_rust_lo;
 }
 QPushButton[role="primary"]:hover {
-    background: #d85830;
-    color: #fde9b5;
+    background: $col_rust_hi;
 }
 QPushButton[role="primary"]:pressed {
-    background: #7a3018;
-    border-top: 2px solid #6e2410;
-    border-left: 2px solid #6e2410;
-    border-right: 2px solid #e87648;
-    border-bottom: 2px solid #e87648;
+    background: $col_rust_pressed;
+    border-top: ${bd_width}px solid $col_rust_lo;
+    border-left: ${bd_width}px solid $col_rust_lo;
+    border-right: ${bd_width}px solid $col_rust_hi;
+    border-bottom: ${bd_width}px solid $col_rust_hi;
 }
 
 QPushButton[role="danger"] {
-    background: #8b2520;
-    color: #fde9b5;
-    border-top: 2px solid #c44030;
-    border-left: 2px solid #c44030;
-    border-right: 2px solid #4a1410;
-    border-bottom: 2px solid #4a1410;
+    background: $col_blood;
+    color: $col_body_hi;
+    border-top: ${bd_width}px solid $col_blood_hi;
+    border-left: ${bd_width}px solid $col_blood_hi;
+    border-right: ${bd_width}px solid $col_blood_lo;
+    border-bottom: ${bd_width}px solid $col_blood_lo;
 }
 QPushButton[role="danger"]:hover {
-    background: #a83028;
+    background: $col_blood_hi;
 }
 QPushButton[role="danger"]:pressed {
-    background: #5a1810;
-    border-top: 2px solid #4a1410;
-    border-left: 2px solid #4a1410;
-    border-right: 2px solid #c44030;
-    border-bottom: 2px solid #c44030;
+    background: $col_blood_lo;
+    border-top: ${bd_width}px solid $col_blood_lo;
+    border-left: ${bd_width}px solid $col_blood_lo;
+    border-right: ${bd_width}px solid $col_blood_hi;
+    border-bottom: ${bd_width}px solid $col_blood_hi;
 }
 
 /* ===========================================================================
- * Sliders  ·  chunky pixel bar + jeweled handle
+ * Sliders
  * ======================================================================== */
 QSlider::groove:horizontal {
     height: 6px;
-    background: #0a0604;
-    border-top: 2px solid #0a0604;
-    border-left: 2px solid #0a0604;
-    border-right: 2px solid #3a2818;
-    border-bottom: 2px solid #3a2818;
+    background: $col_ink;
+    border-top: ${bd_width}px solid $col_ink;
+    border-left: ${bd_width}px solid $col_ink;
+    border-right: ${bd_width}px solid $col_edge;
+    border-bottom: ${bd_width}px solid $col_edge;
 }
 QSlider::sub-page:horizontal {
-    background: #c44a20;
+    background: $col_rust;
     border: none;
 }
 QSlider::add-page:horizontal {
-    background: #0a0604;
+    background: $col_ink;
     border: none;
 }
 QSlider::handle:horizontal {
-    background: #d4a528;
-    border-top: 2px solid #f3d050;
-    border-left: 2px solid #f3d050;
-    border-right: 2px solid #6e4810;
-    border-bottom: 2px solid #6e4810;
+    background: $col_gold;
+    border-top: ${bd_width}px solid $col_gold_hi;
+    border-left: ${bd_width}px solid $col_gold_hi;
+    border-right: ${bd_width}px solid $col_gold_lo;
+    border-bottom: ${bd_width}px solid $col_gold_lo;
     width: 14px;
     height: 18px;
     margin: -10px 0;
 }
 QSlider::handle:horizontal:hover {
-    background: #f3d050;
+    background: $col_gold_hi;
 }
 QSlider::handle:horizontal:pressed {
-    background: #8a6a28;
-    border-top: 2px solid #6e4810;
-    border-left: 2px solid #6e4810;
-    border-right: 2px solid #f3d050;
-    border-bottom: 2px solid #f3d050;
+    background: $col_gold_lo;
+    border-top: ${bd_width}px solid $col_gold_lo;
+    border-left: ${bd_width}px solid $col_gold_lo;
+    border-right: ${bd_width}px solid $col_gold_hi;
+    border-bottom: ${bd_width}px solid $col_gold_hi;
 }
 
 /* ===========================================================================
- * Checkboxes & radios  ·  pixel checks
+ * Checkboxes & radios
  * ======================================================================== */
 QCheckBox,
 QRadioButton {
-    color: #c9b48a;
-    spacing: 12px;
+    color: $col_body;
+    spacing: ${sp_md}px;
     background: transparent;
-    font-family: "Pixelify Sans", serif;
-    font-size: 13pt;
+    font-family: $font_body;
+    font-size: ${sz_checkbox}pt;
 }
 QCheckBox::indicator,
 QRadioButton::indicator {
     width: 16px;
     height: 16px;
-    background: #0e0805;
-    border-top: 2px solid #0a0604;
-    border-left: 2px solid #0a0604;
-    border-right: 2px solid #3a2818;
-    border-bottom: 2px solid #3a2818;
+    background: $col_page_deep;
+    border-top: ${bd_width}px solid $col_ink;
+    border-left: ${bd_width}px solid $col_ink;
+    border-right: ${bd_width}px solid $col_edge;
+    border-bottom: ${bd_width}px solid $col_edge;
 }
 QCheckBox::indicator:hover,
 QRadioButton::indicator:hover {
-    border-top: 2px solid #d4a528;
-    border-left: 2px solid #d4a528;
+    border-top: ${bd_width}px solid $col_gold;
+    border-left: ${bd_width}px solid $col_gold;
 }
 QCheckBox::indicator:checked,
 QRadioButton::indicator:checked {
-    background: #c44a20;
-    border-top: 2px solid #e87648;
-    border-left: 2px solid #e87648;
-    border-right: 2px solid #6e2410;
-    border-bottom: 2px solid #6e2410;
+    background: $col_rust;
+    border-top: ${bd_width}px solid $col_rust_hi;
+    border-left: ${bd_width}px solid $col_rust_hi;
+    border-right: ${bd_width}px solid $col_rust_lo;
+    border-bottom: ${bd_width}px solid $col_rust_lo;
 }
 
 /* ===========================================================================
@@ -406,101 +399,101 @@ QRadioButton::indicator:checked {
 QListWidget,
 QTreeWidget,
 QTextEdit {
-    background: #0e0805;
-    color: #c9b48a;
-    border-top: 2px solid #0a0604;
-    border-left: 2px solid #0a0604;
-    border-right: 2px solid #3a2818;
-    border-bottom: 2px solid #3a2818;
-    padding: 4px 0;
-    selection-background-color: #c44a20;
-    selection-color: #fde9b5;
+    background: $col_page_deep;
+    color: $col_body;
+    border-top: ${bd_width}px solid $col_ink;
+    border-left: ${bd_width}px solid $col_ink;
+    border-right: ${bd_width}px solid $col_edge;
+    border-bottom: ${bd_width}px solid $col_edge;
+    padding: ${sp_xs}px 0;
+    selection-background-color: $col_rust;
+    selection-color: $col_body_hi;
     outline: none;
-    font-family: "Pixelify Sans", serif;
-    font-size: 14pt;
+    font-family: $font_body;
+    font-size: ${sz_list_item}pt;
 }
 QListWidget::item,
 QTreeWidget::item {
-    padding: 8px 14px;
+    padding: ${sp_sm}px ${sp_md}px;
     border: none;
 }
 QListWidget::item:selected,
 QTreeWidget::item:selected {
-    background: #c44a20;
-    color: #fde9b5;
+    background: $col_rust;
+    color: $col_body_hi;
 }
 QListWidget::item:hover:!selected,
 QTreeWidget::item:hover:!selected {
-    background: #2a1c10;
-    color: #fde9b5;
+    background: $col_panel;
+    color: $col_body_hi;
 }
 QTreeWidget::branch {
     background: transparent;
 }
 
 /* ===========================================================================
- * Code preview  ·  parchment scroll with terminal pixel ink
+ * Code preview — parchment scroll
  * ======================================================================== */
 QPlainTextEdit {
-    background: #ece0c0;
-    color: #2e1f0e;
-    border-top: 2px solid #0a0604;
-    border-left: 2px solid #0a0604;
-    border-right: 2px solid #5e4628;
-    border-bottom: 2px solid #5e4628;
-    padding: 16px 20px;
-    selection-background-color: #c44a20;
-    selection-color: #fde9b5;
-    font-family: "VT323", "Menlo", "Consolas", monospace;
-    font-size: 16pt;
+    background: $col_parchment;
+    color: $col_ink_dark;
+    border-top: ${bd_width}px solid $col_ink;
+    border-left: ${bd_width}px solid $col_ink;
+    border-right: ${bd_width}px solid $col_bevel;
+    border-bottom: ${bd_width}px solid $col_bevel;
+    padding: ${sp_lg}px ${sp_xl}px;
+    selection-background-color: $col_rust;
+    selection-color: $col_body_hi;
+    font-family: $font_mono;
+    font-size: ${sz_code}pt;
 }
 
 /* ===========================================================================
- * Splitter  ·  forged seam, hover ember
+ * Splitter
  * ======================================================================== */
 QSplitter::handle {
-    background: #5e4628;
+    background: $col_bevel;
 }
-QSplitter::handle:horizontal { width: 2px; }
-QSplitter::handle:vertical { height: 2px; }
-QSplitter::handle:hover { background: #c44a20; }
+QSplitter::handle:horizontal { width: ${bd_width}px; }
+QSplitter::handle:vertical { height: ${bd_width}px; }
+QSplitter::handle:hover { background: $col_rust; }
 
 /* ===========================================================================
- * Scrollbars  ·  pixel rails
+ * Scrollbars
  * ======================================================================== */
 QScrollBar:vertical {
-    background: #0a0604;
+    background: $col_ink;
     width: 14px;
     margin: 0;
     border: none;
 }
 QScrollBar::handle:vertical {
-    background: #5e4628;
-    border-top: 2px solid #8a6a3a;
-    border-left: 2px solid #8a6a3a;
-    border-right: 2px solid #2a1c10;
-    border-bottom: 2px solid #2a1c10;
+    background: $col_bevel;
+    border-top: ${bd_width}px solid $col_bevel_hi;
+    border-left: ${bd_width}px solid $col_bevel_hi;
+    border-right: ${bd_width}px solid $col_panel;
+    border-bottom: ${bd_width}px solid $col_panel;
     min-height: 32px;
 }
 QScrollBar::handle:vertical:hover {
-    background: #8a6a3a;
+    background: $col_bevel_hi;
 }
 QScrollBar:horizontal {
-    background: #0a0604;
+    background: $col_ink;
     height: 14px;
     margin: 0;
     border: none;
 }
 QScrollBar::handle:horizontal {
-    background: #5e4628;
-    border-top: 2px solid #8a6a3a;
-    border-left: 2px solid #8a6a3a;
-    border-right: 2px solid #2a1c10;
-    border-bottom: 2px solid #2a1c10;
+    background: $col_bevel;
+    border-top: ${bd_width}px solid $col_bevel_hi;
+    border-left: ${bd_width}px solid $col_bevel_hi;
+    border-right: ${bd_width}px solid $col_panel;
+    border-bottom: ${bd_width}px solid $col_panel;
     min-width: 32px;
 }
 QScrollBar::handle:horizontal:hover {
-    background: #8a6a3a;
+    background: $col_bevel_hi;
 }
 QScrollBar::add-line,
 QScrollBar::sub-line {
@@ -518,13 +511,13 @@ QScrollBar::sub-page {
  * Tooltips
  * ======================================================================== */
 QToolTip {
-    background: #2a1c10;
-    color: #fde9b5;
-    border-top: 2px solid #5e4628;
-    border-left: 2px solid #5e4628;
-    border-right: 2px solid #0a0604;
-    border-bottom: 2px solid #0a0604;
-    padding: 8px 12px;
-    font-family: "Pixelify Sans", serif;
-    font-size: 13pt;
+    background: $col_panel;
+    color: $col_body_hi;
+    border-top: ${bd_width}px solid $col_bevel;
+    border-left: ${bd_width}px solid $col_bevel;
+    border-right: ${bd_width}px solid $col_ink;
+    border-bottom: ${bd_width}px solid $col_ink;
+    padding: ${sp_sm}px ${sp_md}px;
+    font-family: $font_body;
+    font-size: ${sz_tooltip}pt;
 }

@@ -2,6 +2,8 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QSlider, QWidget
 
+from ui_new.tokens import COLORS, FONT_FAMILY, SIZES, SPACE
+
 
 class LabeledSlider(QWidget):
     """Horizontal slider with a chunky pixel numeric readout."""
@@ -23,17 +25,17 @@ class LabeledSlider(QWidget):
         self._slider.setRange(minimum, maximum)
         self._slider.setValue(value)
 
-        readout_font = QFont("VT323", 18)
+        readout_font = QFont(FONT_FAMILY["mono"], SIZES["readout"])
 
         self._readout = QLabel(self._format(value), self)
         self._readout.setFont(readout_font)
         self._readout.setFixedWidth(52)
         self._readout.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        self._readout.setStyleSheet("color: #d4a528;")
+        self._readout.setStyleSheet(f"color: {COLORS['gold']};")
 
         lay = QHBoxLayout(self)
         lay.setContentsMargins(0, 0, 0, 0)
-        lay.setSpacing(16)
+        lay.setSpacing(SPACE["lg"])
         lay.addWidget(self._slider, stretch=1)
         lay.addWidget(self._readout)
 
