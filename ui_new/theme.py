@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from string import Template
 
@@ -11,12 +12,38 @@ QSS_PATH = Path(__file__).parent / "theme.qss"
 FONT_DIR = ASSETS / "fonts"
 
 
+def pixel_font(family_key: str, size_key: str) -> QFont:
+    """Build a QFont sized in integer px with hinting/antialiasing tuned for
+    the bundled bitmap-style fonts. Use this instead of `QFont(family, pt)`
+    anywhere we set a font in Python."""
+    f = QFont(FONT_FAMILY[family_key])
+    f.setPixelSize(SIZES[size_key])
+    f.setStyleStrategy(
+        QFont.StyleStrategy.NoAntialias | QFont.StyleStrategy.PreferMatch
+    )
+    f.setHintingPreference(QFont.HintingPreference.PreferFullHinting)
+    return f
+
+
 def _load_bundled_fonts() -> None:
-    """Register every bundled TTF so QSS can address it by family name."""
-    if not FONT_DIR.exists():
-        return
-    for ttf in sorted(FONT_DIR.glob("*.ttf")):
-        QFontDatabase.addApplicationFont(str(ttf))
+    """Register every bundled TTF, then warn if any voice family is missing."""
+    loaded: list[str] = []
+    if FONT_DIR.exists():
+        for ttf in sorted(FONT_DIR.glob("*.ttf")):
+            font_id = QFontDatabase.addApplicationFont(str(ttf))
+            if font_id < 0:
+                print(f"[ui_new] failed to register {ttf.name}", file=sys.stderr)
+                continue
+            loaded.extend(QFontDatabase.applicationFontFamilies(font_id))
+
+    available = set(loaded) | set(QFontDatabase.families())
+    for voice, family in FONT_FAMILY.items():
+        if family not in available:
+            print(
+                f"[ui_new] font missing for {voice!r}: {family!r} — "
+                f"will fall back to system serif/mono",
+                file=sys.stderr,
+            )
 
 
 def _render_qss() -> str:
@@ -26,10 +53,7 @@ def _render_qss() -> str:
 
 def apply(app: QApplication) -> None:
     _load_bundled_fonts()
-
-    base = QFont(FONT_FAMILY["body"], SIZES["body"])
-    base.setStyleStrategy(QFont.StyleStrategy.PreferAntialias)
-    app.setFont(base)
+    app.setFont(pixel_font("body", "body"))
 
     p = QPalette()
     p.setColor(QPalette.ColorRole.Window,          QColor(COLORS["page"]))

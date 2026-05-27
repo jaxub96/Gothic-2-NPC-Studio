@@ -1,5 +1,7 @@
 from PySide6.QtCore import QObject, Signal
 
+_MISSING = object()
+
 
 class NpcModel(QObject):
     """Reactive wrapper around the plain Npc data class.
@@ -22,8 +24,8 @@ class NpcModel(QObject):
         return getattr(self._npc, attr)
 
     def set(self, attr: str, value) -> None:
-        current = getattr(self._npc, attr, object())
-        if current == value:
+        current = getattr(self._npc, attr, _MISSING)
+        if current is not _MISSING and current == value:
             return
         setattr(self._npc, attr, value)
         self.changed.emit(attr)

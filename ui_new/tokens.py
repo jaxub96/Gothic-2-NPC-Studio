@@ -68,24 +68,26 @@ FONT_FAMILY = {
 }
 
 # ---------------------------------------------------------------------------
-# Type scale (pt) — strict ladder, no off-scale sizes anywhere in the UI
+# Type scale (px) — pixel-perfect sizes for the bundled bitmap-style fonts.
+# Integer px (not pt) so Retina / HiDPI scaling stays on integer multiples and
+# the pixel fonts render crisp without subpixel blur.
 # ---------------------------------------------------------------------------
 SIZES = {
-    "body":      13,
-    "field":     14,
-    "label":     13,
-    "list_item": 14,
-    "checkbox":  13,
-    "button":    16,
-    "tab":       18,
-    "section":   17,
-    "menu":      16,
-    "menu_item": 13,
-    "status":    15,
-    "viewport":  16,
-    "readout":   18,
-    "code":      16,
-    "tooltip":   13,
+    "body":      20,
+    "field":     22,
+    "label":     20,
+    "list_item": 22,
+    "checkbox":  20,
+    "button":    24,
+    "tab":       28,
+    "section":   26,
+    "menu":      24,
+    "menu_item": 20,
+    "status":    22,
+    "viewport":  24,
+    "readout":   28,
+    "code":      24,
+    "tooltip":   20,
 }
 
 # ---------------------------------------------------------------------------
@@ -110,12 +112,37 @@ BORDER = {
 }
 
 # ---------------------------------------------------------------------------
+# Chrome — fixed widget geometry (px) that doesn't belong to the spacing scale
+# ---------------------------------------------------------------------------
+CHROME = {
+    "tab_min_width":        128,
+    "label_col":            180,
+    "scroll_w":              16,
+    "scroll_min_thumb":      40,
+    "indicator":             22,
+    "slider_handle_w":       18,
+    "slider_handle_h":       24,
+    "slider_handle_overhang": 12,
+    "slider_groove_h":        8,
+    "readout_w":             88,
+    "qty_field_w":           96,
+    "tree_indent":           18,
+    "arrow_combo_w":          6,
+    "arrow_combo_h":          8,
+    "arrow_spin_w":           5,
+    "arrow_spin_h":           6,
+    # letter-spacing tracking
+    "track_chrome":           1,   # menu bar, status bar
+    "track_emph":             2,   # tabs, section titles, buttons
+}
+
+# ---------------------------------------------------------------------------
 # Window defaults
 # ---------------------------------------------------------------------------
 WINDOW = {
     "title":   "Gothic II — NPC Studio",
-    "size":    (1600, 1000),
-    "min":     (1280, 820),
+    "size":    (1760, 1080),
+    "min":     (1440, 900),
     "org":     "GothicMods",
     "app":     "NPC-Studio-New",
 }
@@ -142,4 +169,6 @@ def token_map() -> dict[str, str]:
         flat[f"sp_{k}"] = str(v)
     for k, v in BORDER.items():
         flat[f"bd_{k}"] = str(v)
+    for k, v in CHROME.items():
+        flat[f"ch_{k}"] = str(v)
     return flat

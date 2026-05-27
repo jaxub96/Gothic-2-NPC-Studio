@@ -9,6 +9,8 @@ from PySide6.QtWidgets import (
 
 from constants.mappings import talentLevelMap
 from data.fights import fightMap
+from ui_new.binding import select_combo_by_value
+from ui_new.tokens import SPACE
 from ui_new.widgets.form import FormSection
 from ui_new.widgets.slider import LabeledSlider
 
@@ -26,16 +28,19 @@ def _talent_row(model, attr: str) -> QWidget:
     row = QWidget()
     lay = QHBoxLayout(row)
     lay.setContentsMargins(0, 0, 0, 0)
-    lay.setSpacing(22)
+    lay.setSpacing(SPACE["xl"])
 
     group = QButtonGroup(row)
     group.setExclusive(True)
 
+    current = model.get(attr)
     for text, key in _TALENT_LEVELS:
         rb = QRadioButton(text, row)
-        rb.setChecked(key == "none")
+        level_value = talentLevelMap[key]
+        if current == level_value:
+            rb.setChecked(True)
         rb.toggled.connect(
-            lambda checked, k=key, a=attr: checked and model.set(a, talentLevelMap[k])
+            lambda checked, v=level_value, a=attr: checked and model.set(a, v)
         )
         group.addButton(rb)
         lay.addWidget(rb)
@@ -46,12 +51,13 @@ def _talent_row(model, attr: str) -> QWidget:
 def build(model) -> QWidget:
     root = QWidget()
     layout = QVBoxLayout(root)
-    layout.setContentsMargins(28, 8, 28, 28)
+    layout.setContentsMargins(SPACE["xl"], SPACE["sm"], SPACE["xl"], SPACE["xl"])
     layout.setSpacing(0)
 
     combat = FormSection("Combat")
     fight = QComboBox()
     fight.addItems(list(fightMap.keys()))
+    select_combo_by_value(fight, fightMap, model.get("fight"))
     fight.currentTextChanged.connect(lambda t: model.set("fight", fightMap.get(t)))
     combat.addField("Tactic", fight)
 

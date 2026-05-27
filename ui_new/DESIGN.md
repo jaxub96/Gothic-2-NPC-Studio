@@ -22,8 +22,11 @@ Token namespace, all flattened in `token_map()`:
 | `col_*` | `COLORS` | `col_rust` → `#c44a20` |
 | `font_*` | `FONTS` | `font_display` → `"Jersey 10", …` |
 | `sz_*` | `SIZES` (pt) | `sz_tab` → `18` |
-| `sp_*` | `SPACE` (px) | `sp_xl` → `24` |
+| `sp_*` | `SPACE` (px, multiples of 4) | `sp_xl` → `24` |
 | `bd_*` | `BORDER` (px) | `bd_width` → `2` |
+| `ch_*` | `CHROME` (px, off-scale fixed widget geometry & tracking) | `ch_label_col` → `140`, `ch_track_emph` → `2` |
+
+`SPACE` is the layout scale (margins, gaps, padding). `CHROME` is for fixed widget sizes that don't belong on the multiples-of-4 ladder — scrollbar widths, slider handle, indicator boxes, arrow triangles, tab min-width, label column width, letter-spacing. New chrome value? Add to `CHROME`, don't squeeze it into `SPACE`.
 
 Adding a new theme later: write `tokens_<name>.py` exposing the same shape, swap the import in `theme.apply()`.
 
@@ -41,17 +44,19 @@ Three voices. **One typeface per voice — no mixing within a category.**
 
 All three TTFs are bundled in `ui_new/assets/fonts/` and registered at app start via `QFontDatabase`. Fallback to system serif/mono if missing.
 
-### Size scale (pt) — small, fixed, used everywhere
+### Size scale (px) — pixel-perfect ladder
 
-| Token | pt | Where |
+Pixel-style fonts (Jersey 10, Pixelify Sans, VT323) render crisp **only at integer px** with `NoAntialias`. Sizes are px, not pt — `pt` gets fractionally scaled by DPI and reintroduces subpixel blur on Retina.
+
+| Token | px | Where |
 |-------|----|-------|
-| `sz_label` / `sz_checkbox` / `sz_menu_item` / `sz_tooltip` / `sz_body` | 13 | field labels, checkbox text, menu items |
-| `sz_field` / `sz_list_item` | 14 | input contents, list rows |
-| `sz_status` | 15 | status bar |
-| `sz_button` / `sz_menu` / `sz_viewport` / `sz_code` / `sz_section` | 16–17 | buttons, menu bar, section titles, code, viewport status |
-| `sz_tab` / `sz_readout` | 18 | tab labels, slider numeric readout |
+| `sz_label` / `sz_checkbox` / `sz_menu_item` / `sz_tooltip` / `sz_body` | 20 | field labels, checkbox text, menu items |
+| `sz_field` / `sz_list_item` / `sz_status` | 22 | input contents, list rows, status bar |
+| `sz_button` / `sz_menu` / `sz_viewport` / `sz_code` | 24 | buttons, menu bar, code, viewport status |
+| `sz_section` | 26 | section titles |
+| `sz_tab` / `sz_readout` | 28 | tab labels, slider numeric readout |
 
-If a new element doesn't fit one of these sizes, **change the element**, don't add a new size.
+If a new element doesn't fit one of these sizes, **change the element**, don't add a new size. In Python, never call `QFont(family, n)` directly — use `theme.pixel_font(family_key, size_key)`, which configures `NoAntialias + PreferMatch + PreferFullHinting`.
 
 ---
 
@@ -101,7 +106,7 @@ No `border-radius`. No gradients. No drop-shadows.
 
 - **Window:** 1600 × 1000 default; 1280 × 820 minimum (from `WINDOW` token).
 - **Splitters:** main pane (form tabs ↔ viewport+preview, horizontal); right pane (viewport ↔ preview, vertical). 2px handles, hover ember.
-- **View margins:** `xl` (24 px) all around; sections separated by `xxl` (32 px) top margin.
+- **View margins:** `xl` horizontal/bottom, `sm` top (group box already adds `xxl` top margin); sections separated by `xxl` top margin.
 - **Form rows:** `xl` horizontal between label and field; `lg+4` vertical between rows; label column min-width 140 px so columns align across tabs.
 - **Tabs:** 4px right margin between tabs (`sp_xs`); chunky bevel; uppercase letter-spaced.
 

@@ -1,13 +1,12 @@
 import sys
 
-from PySide6.QtCore import QByteArray, QSettings, Qt
+from PySide6.QtCore import QByteArray, QSettings, Qt, QTimer
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
     QSplitter,
     QTabWidget,
-    QWidget,
 )
 
 from services.file_service import generateFile, getFileName
@@ -27,6 +26,8 @@ from ui_new.widgets.preview import CodePreviewPane
 
 _ORG = WINDOW["org"]
 _APP = WINDOW["app"]
+
+_STATUS_DEBOUNCE_MS = 400
 
 
 class NewMainWindow(QMainWindow):
@@ -101,24 +102,43 @@ class NewMainWindow(QMainWindow):
     def _wire_status(self) -> None:
         bar = self.statusBar()
         bar.showMessage("Ready")
-        self.model.changed.connect(
-            lambda _attr: bar.showMessage("Modified", 3000)
+
+        self._status_timer = QTimer(self)
+        self._status_timer.setSingleShot(True)
+        self._status_timer.setInterval(_STATUS_DEBOUNCE_MS)
+        self._status_timer.timeout.connect(
+            lambda: bar.showMessage("Modified", _STATUS_DEBOUNCE_MS * 4)
         )
+        self.model.changed.connect(lambda _attr: self._status_timer.start())
 
     # ----------------------------------------------------------------- actions
 
     def _save_file(self) -> None:
-        path = getFileName(self.model.npc)
-        generateFile(
-            self.model.npc,
-            lambda: self.statusBar().showMessage(f"Saved  ·  {path}", 6000),
-        )
+        bar = self.statusBar()
+        try:
+            path = getFileName(self.model.npc)
+        except Exception as e:
+            bar.showMessage(f"Save failed — {e}", 6000)
+            return
+        if not path:
+            bar.showMessage("Save failed — no output path", 6000)
+            return
+        try:
+            generateFile(
+                self.model.npc,
+                lambda: bar.showMessage(f"Saved  ·  {path}", 6000),
+            )
+        except Exception as e:
+            bar.showMessage(f"Save failed — {e}", 6000)
 
     def _reset_layout(self) -> None:
         self._settings.remove("geometry")
         self._settings.remove("main_split")
         self._settings.remove("right_split")
-        self.statusBar().showMessage("Layout reset on next launch.", 4000)
+        self.resize(*WINDOW["size"])
+        self._main_split.setSizes([400, 600])
+        self._right_split.setSizes([600, 400])
+        self.statusBar().showMessage("Layout reset.", 3000)
 
     # ----------------------------------------------------------- persistence
 

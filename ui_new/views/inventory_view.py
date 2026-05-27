@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import (
     QCompleter,
     QHBoxLayout,
@@ -16,14 +16,20 @@ from PySide6.QtWidgets import (
 
 from data.armors import armorData
 from data.items import all_items
+from ui_new.binding import select_tree_by_userrole
+from ui_new.theme import pixel_font
+from ui_new.tokens import CHROME, SPACE
 from ui_new.widgets.form import FormSection
+
+
+_ITEM_KEY_ROLE = Qt.ItemDataRole.UserRole + 1
 
 
 def _build_armor_tree() -> QTreeWidget:
     tree = QTreeWidget()
     tree.setHeaderHidden(True)
-    tree.setIndentation(14)
-    bold = QFont()
+    tree.setIndentation(CHROME["tree_indent"])
+    bold = pixel_font("body", "list_item")
     bold.setBold(True)
 
     for category, items in armorData.items():
@@ -37,19 +43,46 @@ def _build_armor_tree() -> QTreeWidget:
     return tree
 
 
+def _build_item_completer(line_edit: QLineEdit) -> QCompleter:
+    """Completer whose visible text is 'key — name' but whose accepted value
+    carries the item key in UserRole+1 so we never have to re-parse strings."""
+    model = QStandardItemModel(line_edit)
+    for key, name in all_items.items():
+        item = QStandardItem(f"{key} — {name}")
+        item.setData(key, _ITEM_KEY_ROLE)
+        model.appendRow(item)
+
+    completer = QCompleter(model, line_edit)
+    completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+    completer.setFilterMode(Qt.MatchFlag.MatchContains)
+    line_edit.setCompleter(completer)
+    return completer
+
+
+def _resolve_item_key(text: str) -> str | None:
+    """Map either a raw key or a 'key — name' completion display to a key."""
+    text = text.strip()
+    if not text:
+        return None
+    if text in all_items:
+        return text
+    head = text.split(" ", 1)[0]
+    return head if head in all_items else None
+
+
 def build(model) -> QWidget:
     root = QWidget()
     layout = QVBoxLayout(root)
-    layout.setContentsMargins(28, 8, 28, 28)
+    layout.setContentsMargins(SPACE["xl"], SPACE["sm"], SPACE["xl"], SPACE["xl"])
     layout.setSpacing(0)
 
     splitter = QSplitter(Qt.Orientation.Vertical)
     splitter.setChildrenCollapsible(False)
-    splitter.setHandleWidth(1)
 
     # --- Armor -------------------------------------------------------------
     armor_section = FormSection("Armor")
     tree = _build_armor_tree()
+    select_tree_by_userrole(tree, model.get("armor"))
 
     def on_armor_select() -> None:
         sel = tree.selectedItems()
@@ -73,24 +106,20 @@ def build(model) -> QWidget:
     # --- Items -------------------------------------------------------------
     items_section = FormSection("Items")
 
-    completer = QCompleter([f"{k} — {v}" for k, v in all_items.items()])
-    completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-    completer.setFilterMode(Qt.MatchFlag.MatchContains)
-
     search = QLineEdit()
     search.setPlaceholderText("Search…")
-    search.setCompleter(completer)
+    _build_item_completer(search)
 
     qty = QSpinBox()
     qty.setRange(1, 99)
     qty.setValue(1)
-    qty.setFixedWidth(70)
+    qty.setFixedWidth(CHROME["qty_field_w"])
 
     add_btn = QPushButton("Add")
     add_btn.setProperty("role", "primary")
 
     search_row = QHBoxLayout()
-    search_row.setSpacing(10)
+    search_row.setSpacing(SPACE["md"])
     search_row.addWidget(search, stretch=1)
     search_row.addWidget(qty)
     search_row.addWidget(add_btn)
@@ -117,10 +146,9 @@ def build(model) -> QWidget:
             inv_list.addItem(f"{entry['item']}    ×{entry['quantity']}")
 
     def on_add() -> None:
-        text = search.text().strip()
-        if not text or " — " not in text:
+        key = _resolve_item_key(search.text())
+        if key is None:
             return
-        key = text.split(" — ")[0].strip()
         model.add_inventory(key, qty.value())
         search.clear()
         qty.setValue(1)

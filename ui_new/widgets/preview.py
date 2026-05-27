@@ -1,9 +1,8 @@
 from PySide6.QtCore import QTimer
-from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QPlainTextEdit
 
 from services.output_builder import buildOutput
-from ui_new.tokens import FONT_FAMILY, SIZES
+from ui_new.theme import pixel_font
 from ui_new.widgets.highlighter import DaedalusHighlighter
 
 
@@ -16,7 +15,7 @@ class CodePreviewPane(QPlainTextEdit):
         super().__init__(parent)
         self.setReadOnly(True)
         self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
-        self.setFont(QFont(FONT_FAMILY["mono"], SIZES["code"]))
+        self.setFont(pixel_font("mono", "code"))
 
         self._model = model
         self._highlighter = DaedalusHighlighter(self.document())

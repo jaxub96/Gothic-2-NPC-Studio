@@ -1,8 +1,8 @@
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QSlider, QWidget
 
-from ui_new.tokens import COLORS, FONT_FAMILY, SIZES, SPACE
+from ui_new.theme import pixel_font
+from ui_new.tokens import CHROME, COLORS, SPACE
 
 
 class LabeledSlider(QWidget):
@@ -16,6 +16,7 @@ class LabeledSlider(QWidget):
         maximum: int,
         value: int = 0,
         suffix: str = "",
+        show_readout: bool = True,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -25,13 +26,12 @@ class LabeledSlider(QWidget):
         self._slider.setRange(minimum, maximum)
         self._slider.setValue(value)
 
-        readout_font = QFont(FONT_FAMILY["mono"], SIZES["readout"])
-
         self._readout = QLabel(self._format(value), self)
-        self._readout.setFont(readout_font)
-        self._readout.setFixedWidth(52)
+        self._readout.setFont(pixel_font("mono", "readout"))
+        self._readout.setFixedWidth(CHROME["readout_w"])
         self._readout.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         self._readout.setStyleSheet(f"color: {COLORS['gold']};")
+        self._readout.setVisible(show_readout)
 
         lay = QHBoxLayout(self)
         lay.setContentsMargins(0, 0, 0, 0)
