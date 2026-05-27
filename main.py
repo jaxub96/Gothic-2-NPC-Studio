@@ -1,8 +1,22 @@
 # main.py
 
+import os
+import sys
+
 from models.Npc import Npc
-from ui.app import launch
+
+
+def _use_new_ui() -> bool:
+    if "--new" in sys.argv:
+        sys.argv.remove("--new")
+        return True
+    return os.environ.get("GOTHIC_NEW_UI", "0") not in ("0", "", "false", "False")
+
 
 if __name__ == "__main__":
     npc = Npc()
+    if _use_new_ui():
+        from ui.app_new import launch
+    else:
+        from ui.app import launch
     launch(npc)
