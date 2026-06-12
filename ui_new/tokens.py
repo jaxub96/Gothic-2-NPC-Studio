@@ -134,6 +134,8 @@ CHROME = {
     # letter-spacing tracking
     "track_chrome":           1,   # menu bar, status bar
     "track_emph":             2,   # tabs, section titles, buttons
+    # embedded head preview (Visual tab)
+    "head_viewer_min_h":    280,
 }
 
 # ---------------------------------------------------------------------------

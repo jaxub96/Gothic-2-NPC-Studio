@@ -4,6 +4,7 @@ from PySide6.QtCore import QByteArray, QSettings, Qt, QTimer
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (
     QApplication,
+    QFileDialog,
     QMainWindow,
     QSplitter,
     QTabWidget,
@@ -28,6 +29,36 @@ _ORG = WINDOW["org"]
 _APP = WINDOW["app"]
 
 _STATUS_DEBOUNCE_MS = 400
+
+_IMPORTABLE_ATTRS = (
+    "name",
+    "id",
+    "guild",
+    "level",
+    "type",
+    "str",
+    "dex",
+    "mana",
+    "hp",
+    "voice",
+    "fatness",
+    "immortal",
+    "friend",
+    "head",
+    "walking",
+    "armor",
+    "body_tex",
+    "face",
+    "teeth_tex",
+    "skin_color",
+    "fight",
+    "t1h",
+    "t2h",
+    "bow",
+    "cbow",
+    "magic",
+    "inv_qty",
+)
 
 
 class NewMainWindow(QMainWindow):
@@ -83,6 +114,11 @@ class NewMainWindow(QMainWindow):
 
         file_menu = mb.addMenu("&File")
 
+        open_act = QAction("&Open Daedalus File…", self)
+        open_act.setShortcut(QKeySequence.StandardKey.Open)
+        open_act.triggered.connect(self._open_file)
+        file_menu.addAction(open_act)
+
         save_act = QAction("&Save Daedalus File", self)
         save_act.setShortcut(QKeySequence.StandardKey.Save)
         save_act.triggered.connect(self._save_file)
@@ -112,6 +148,33 @@ class NewMainWindow(QMainWindow):
         self.model.changed.connect(lambda _attr: self._status_timer.start())
 
     # ----------------------------------------------------------------- actions
+
+    def _open_file(self) -> None:
+        bar = self.statusBar()
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Open Daedalus File", "", "Daedalus (*.d)"
+        )
+        if not path:
+            return
+        try:
+            from services.input_parser import parseInputFile
+            parsed = parseInputFile(path)
+        except Exception as e:
+            bar.showMessage(f"Open failed — {e}", 6000)
+            return
+
+        try:
+            for attr in _IMPORTABLE_ATTRS:
+                self.model.set(attr, getattr(parsed, attr))
+            while self.model.npc.inv_items:
+                self.model.remove_inventory(0)
+            for entry in parsed.inv_items:
+                self.model.add_inventory(entry["item"], entry["quantity"])
+        except Exception as e:
+            bar.showMessage(f"Open failed — {e}", 6000)
+            return
+
+        bar.showMessage(f"Loaded  ·  {path}", 6000)
 
     def _save_file(self) -> None:
         bar = self.statusBar()
