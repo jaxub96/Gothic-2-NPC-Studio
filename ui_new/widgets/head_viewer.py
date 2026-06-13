@@ -28,8 +28,8 @@ from pyvistaqt import QtInteractor
 from ui_new.tokens import CHROME, COLORS, FONT_FAMILY, SIZES, SPACE
 
 _ASSETS = Path(__file__).resolve().parents[1] / "assets"
-_MODELS_DIR = _ASSETS / "models"
-_TEXTURES_DIR = _ASSETS / "textures"
+_MODELS_DIR = Path(r"C:\Games\SteamLibrary\steamapps\common\Gothic II\_work\data\Anims\asc_hum_head_ALL\converted")
+_TEXTURES_DIR = Path(r"C:\Games\SteamLibrary\steamapps\common\Gothic II\_work\data\Textures\NPCs\Head")
 
 # three.js parity: GridHelper(20, 40) → fixed divisions, span scaled to mesh;
 # fitCamera() → dist = radius * 4, eye lifted 0.2 * dist above center.
@@ -56,6 +56,8 @@ def _read_head(path: Path) -> pv.PolyData:
     if "TEXCOORD_0" in surf.point_data:
         surf.active_texture_coordinates = surf.point_data["TEXCOORD_0"]
     surf.rotate_x(_ZUP_TO_YUP_DEG, inplace=True)
+    surf.rotate_x(90.0, inplace=True)
+    surf.rotate_y(90.0, inplace=True)
     return surf
 
 
@@ -88,7 +90,7 @@ class HeadViewer(QWidget):
         super().__init__(parent)
         self._model = model
         self._mesh: pv.PolyData | None = None
-        self._texture = self._find_texture()
+        self._texture = self._find_texture(model.get("face"))
         self.setMinimumHeight(CHROME["head_viewer_min_h"])
 
         layout = QVBoxLayout(self)
@@ -136,28 +138,48 @@ class HeadViewer(QWidget):
         self._btn_tex.toggled.connect(lambda _on: self._add_model_actor())
 
         model.changed.connect(self._on_model_changed)
-        self._load_head(model.get("head"))
+        self._load_head(model.get("head") or _DEFAULT_HEAD)
+
 
     # ------------------------------------------------------------- reactive
-
     def _on_model_changed(self, attr: str) -> None:
         if attr == "head":
             self._load_head(self._model.get("head"))
+        elif attr == "face":
+            self._on_face_changed(self._model.get("face"))
 
+    def _on_face_changed(self, face_code) -> None:
+        self._texture = self._find_texture(face_code)
+        self._btn_tex.setEnabled(self._texture is not None)
+        if self._texture is None:
+            self._btn_tex.setChecked(False)
+        elif not self._btn_tex.isChecked():
+            self._btn_tex.setChecked(True)
+        self._add_model_actor()
     # -------------------------------------------------------------- loading
 
     @staticmethod
-    def _find_texture() -> pv.Texture | None:
-        """First Hum_Head_* TGA wins; the bundled body atlas is a fallback only.
+    def _find_texture(face_code=None) -> pv.Texture | None:
+        """Resolve the head texture for the given Face index (1-based).
 
-        Real face textures (Hum_Head_V*_C*.tga) live in the Gothic install —
-        drop them into ui_new/assets/textures/ and they take priority.
+        Matches Hum_Head_V{face_code}_C*.tga; falls back to any Hum_Head_*
+        texture, then to the first TGA found, if no exact face match exists.
         """
         candidates = sorted(_TEXTURES_DIR.glob("*.tga")) if _TEXTURES_DIR.is_dir() else []
         if not candidates:
             return None
-        heads = [c for c in candidates if c.name.lower().startswith("hum_head")]
-        pick = heads[0] if heads else candidates[0]
+
+        pick = None
+        if face_code is not None:
+            prefix = f"hum_head_v{face_code}_"
+            matches = [c for c in candidates if c.name.lower().startswith(prefix)]
+            if matches:
+                pick = matches[0]
+
+        if pick is None:
+            heads = [c for c in candidates if c.name.lower().startswith("hum_head")]
+            pick = heads[0] if heads else candidates[0]
+
         try:
             return _load_texture(pick)
         except Exception:

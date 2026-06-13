@@ -33,6 +33,7 @@ def build(model) -> QWidget:
     select_combo_by_value(head, headMap, model.get("head"))
     head.currentTextChanged.connect(lambda t: model.set("head", headMap.get(t)))
     body.addField("Head", head)
+    head.currentTextChanged.emit(head.currentText())
 
     walking = _map_combo(walkingMap)
     select_combo_by_value(walking, walkingMap, model.get("walking"))
