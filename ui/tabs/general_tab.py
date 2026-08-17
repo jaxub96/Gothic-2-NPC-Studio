@@ -7,7 +7,7 @@ from ui.widgets import (create_styled_label, create_styled_entry,
                         create_styled_scale, create_styled_checkbutton,
                         create_styled_combo)
 from data.guilds import guildMap
-from data.types import typeMap
+from data.npc_types import typeMap
 from constants.colors import TEXT_PRIMARY, FONT_PRIMARY
 
 def build(parent: QWidget, npc, handlers) -> None:

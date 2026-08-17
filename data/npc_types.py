@@ -1,4 +1,3 @@
-
 typeMap = {
     "Ambient" : "NPCTYPE_AMBIENT",
     "Main" : "NPCTYPE_MAIN",

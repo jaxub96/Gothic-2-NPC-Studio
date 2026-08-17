@@ -42,10 +42,8 @@ def buildOutput(npc) -> str:
         //========================================
         // VISUALS
         //========================================
-        Mdl_SetVisual (self, "HUMANS.MDS");
-        Mdl_ApplyOverlayMds  (self, "{npc.walking if npc.walking else "HUMANS_MILITIA.MDS"}");
-        Mdl_SetNpcVisual    (self, "hum_body_Naked0", {npc.body_tex}, {npc.skin_color}, "{npc.head if npc.head else "HUM_HEAD_PONY"}", {npc.face}, {npc.teeth_tex}, {armor_str});
-        B_Scale (self);
+        b_setnpcvisual  (self,MALE, "{npc.head if npc.head else "HUM_HEAD_PONY"}",{npc.face},{npc.body_tex},{armor_str});
+        Mdl_ApplyOverlayMds  (self, "{npc.walking if npc.walking else "HUMANS_RELAXED.MDS"}");
         Mdl_SetModelFatness (self, {npc.fatness});
         fight_tactic = {npc.fight if npc.fight else "FAI_Human_Strong"};
         daily_routine = Rtn_{npc.id}_{safe_name}_01;

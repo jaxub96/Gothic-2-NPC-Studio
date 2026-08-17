@@ -2,7 +2,7 @@ from PySide6.QtGui import QIntValidator
 from PySide6.QtWidgets import QCheckBox, QComboBox, QLineEdit, QVBoxLayout, QWidget
 
 from data.guilds import guildMap
-from data.types import typeMap
+from data.npc_types import typeMap
 from ui_new.binding import select_combo_by_value
 from ui_new.tokens import SPACE
 from ui_new.widgets.form import FormSection
