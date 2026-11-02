@@ -28,8 +28,12 @@ from pyvistaqt import QtInteractor
 from ui_new.tokens import CHROME, COLORS, FONT_FAMILY, SIZES, SPACE
 
 _ASSETS = Path(__file__).resolve().parents[1] / "assets"
-_MODELS_DIR = Path(r"C:\Games\SteamLibrary\steamapps\common\Gothic II\_work\data\Anims\asc_hum_head_ALL\converted")
-_TEXTURES_DIR = Path(r"C:\Games\SteamLibrary\steamapps\common\Gothic II\_work\data\Textures\NPCs\Head")
+_MODELS_DIR = Path(
+    r"C:\Users\jkjw\Documents\Python Projects\Gothic-2-NPC-Studio\ui_new\assets\models"
+)
+_TEXTURES_DIR = Path(
+    r"C:\Users\jkjw\OneDrive - Demant\Documents\BLENDER PROJECTS\g2mdk-asc_armor\_work\data\Anims\asc_bodies\armor\head_text"
+)
 
 # three.js parity: GridHelper(20, 40) → fixed divisions, span scaled to mesh;
 # fitCamera() → dist = radius * 4, eye lifted 0.2 * dist above center.
@@ -68,7 +72,9 @@ def _load_texture(path: Path) -> pv.Texture:
     return pv.Texture(np.array(img))
 
 
-def _grid_polydata(center_x: float, center_z: float, y: float, size: float) -> pv.PolyData:
+def _grid_polydata(
+    center_x: float, center_z: float, y: float, size: float
+) -> pv.PolyData:
     """Line grid in the XZ ground plane (Y-up) — equivalent of three.js GridHelper."""
     half = size / 2.0
     ticks = np.linspace(-half, half, _GRID_DIVISIONS + 1)
@@ -140,7 +146,6 @@ class HeadViewer(QWidget):
         model.changed.connect(self._on_model_changed)
         self._load_head(model.get("head") or _DEFAULT_HEAD)
 
-
     # ------------------------------------------------------------- reactive
     def _on_model_changed(self, attr: str) -> None:
         if attr == "head":
@@ -156,6 +161,7 @@ class HeadViewer(QWidget):
         elif not self._btn_tex.isChecked():
             self._btn_tex.setChecked(True)
         self._add_model_actor()
+
     # -------------------------------------------------------------- loading
 
     @staticmethod
@@ -165,7 +171,9 @@ class HeadViewer(QWidget):
         Matches Hum_Head_V{face_code}_C*.tga; falls back to any Hum_Head_*
         texture, then to the first TGA found, if no exact face match exists.
         """
-        candidates = sorted(_TEXTURES_DIR.glob("*.tga")) if _TEXTURES_DIR.is_dir() else []
+        candidates = (
+            sorted(_TEXTURES_DIR.glob("*.tga")) if _TEXTURES_DIR.is_dir() else []
+        )
         if not candidates:
             return None
 
